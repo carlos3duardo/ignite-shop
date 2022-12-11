@@ -51,6 +51,8 @@ export const Product = styled('figure', {
       fontSize: '$xl',
       fontWeight: 'bold',
       color: '$green300',
+      whiteSpace: 'nowrap',
+      marginLeft: '2rem',
     },
   },
 
