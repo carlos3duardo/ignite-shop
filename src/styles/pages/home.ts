@@ -45,6 +45,7 @@ export const Product = styled('figure', {
 
     strong: {
       fontSize: '$lg',
+      color: '$gray100',
     },
 
     span: {
