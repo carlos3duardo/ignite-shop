@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import Stripe from 'stripe';
 import { stripe } from '../../lib/stripe';
@@ -45,10 +45,19 @@ export default function Product({
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
-  any,
-  { id: string }
-> = async ({ params }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [
+      { params: { id: 'prod_Mxrwqm6KiFOKfQ' } },
+      { params: { id: 'prod_Mxrv6rUTdntNmf' } },
+    ],
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
+  params,
+}) => {
   const productId = params ? params.id : '';
 
   const product = await stripe.products.retrieve(productId, {
@@ -65,5 +74,6 @@ export const getServerSideProps: GetServerSideProps<
       price: price.unit_amount ? price.unit_amount / 100 : 0,
       description: product.description,
     },
+    revalidate: 60 * 60 * 2, // 2 hours
   };
 };
