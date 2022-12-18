@@ -17,7 +17,7 @@ export default async function handler(
     });
   }
 
-  const successUrl = `${process.env.APP_URL}/succ ess`;
+  const successUrl = `${process.env.APP_URL}/success`;
   const cancelUrl = `${process.env.APP_URL}`;
 
   const checkoutSession = await stripe.checkout.sessions.create({
