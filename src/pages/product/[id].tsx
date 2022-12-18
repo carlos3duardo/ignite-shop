@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
+import { useState } from 'react';
 import Stripe from 'stripe';
 import { stripe } from '../../lib/stripe';
 import {
@@ -26,8 +27,13 @@ export default function Product({
   description,
   defaultPriceId,
 }: ProductProps) {
+  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
+    useState(false);
+
   async function handleBuyProduct() {
     try {
+      setIsCreatingCheckoutSession(true);
+
       const response = await axios.post('/api/checkout', {
         priceId: defaultPriceId,
       });
@@ -38,6 +44,8 @@ export default function Product({
     } catch (err) {
       // Contctar com algum serviço de observabilidade
       // (Datadog, Bugsnag, Sentry...)
+
+      setIsCreatingCheckoutSession(false);
 
       alert('Falha ao registrar o checkout');
     }
@@ -59,7 +67,11 @@ export default function Product({
 
         <p>{description}</p>
 
-        <button type="button" onClick={handleBuyProduct}>
+        <button
+          type="button"
+          onClick={handleBuyProduct}
+          disabled={isCreatingCheckoutSession}
+        >
           Comprar agora
         </button>
       </ProductDetails>
