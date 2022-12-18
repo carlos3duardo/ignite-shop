@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import Stripe from 'stripe';
@@ -14,6 +15,7 @@ interface ProductProps {
   imageUrl: string;
   price: number;
   description: string;
+  defaultPriceId: string;
 }
 
 export default function Product({
@@ -22,7 +24,25 @@ export default function Product({
   imageUrl,
   price,
   description,
+  defaultPriceId,
 }: ProductProps) {
+  async function handleBuyProduct() {
+    try {
+      const response = await axios.post('/api/checkout', {
+        priceId: defaultPriceId,
+      });
+
+      const { checkoutUrl } = response.data;
+
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      // Contctar com algum serviço de observabilidade
+      // (Datadog, Bugsnag, Sentry...)
+
+      alert('Falha ao registrar o checkout');
+    }
+  }
+
   return (
     <ProductContainer>
       <ImageContainer>
@@ -39,7 +59,9 @@ export default function Product({
 
         <p>{description}</p>
 
-        <button>Comprar agora</button>
+        <button type="button" onClick={handleBuyProduct}>
+          Comprar agora
+        </button>
       </ProductDetails>
     </ProductContainer>
   );
@@ -76,6 +98,7 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
       imageUrl: product.images[0],
       price: price.unit_amount ? price.unit_amount / 100 : 0,
       description: product.description,
+      defaultPriceId: price.id,
     },
     revalidate: 60 * 60 * 2, // 2 hours
   };
