@@ -33,7 +33,6 @@ export default function Home({ products }: HomeProps) {
     <>
       <Head>
         <title>Ignite Shop</title>
-        <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
       <HomeContainer ref={sliderRef} className="keen-slider">

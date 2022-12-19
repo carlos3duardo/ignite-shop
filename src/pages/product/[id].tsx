@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 import { useState } from 'react';
 import Stripe from 'stripe';
@@ -20,7 +21,6 @@ interface ProductProps {
 }
 
 export default function Product({
-  id,
   name,
   imageUrl,
   price,
@@ -52,30 +52,35 @@ export default function Product({
   }
 
   return (
-    <ProductContainer>
-      <ImageContainer>
-        <Image src={imageUrl} width={540} height={480} alt="" />
-      </ImageContainer>
-      <ProductDetails>
-        <h1>{name}</h1>
-        <span>
-          {new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(price)}
-        </span>
+    <>
+      <Head>
+        <title>{`${name} | Ignite Shop`}</title>
+      </Head>
+      <ProductContainer>
+        <ImageContainer>
+          <Image src={imageUrl} width={540} height={480} alt="" />
+        </ImageContainer>
+        <ProductDetails>
+          <h1>{name}</h1>
+          <span>
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }).format(price)}
+          </span>
 
-        <p>{description}</p>
+          <p>{description}</p>
 
-        <button
-          type="button"
-          onClick={handleBuyProduct}
-          disabled={isCreatingCheckoutSession}
-        >
-          Comprar agora
-        </button>
-      </ProductDetails>
-    </ProductContainer>
+          <button
+            type="button"
+            onClick={handleBuyProduct}
+            disabled={isCreatingCheckoutSession}
+          >
+            Comprar agora
+          </button>
+        </ProductDetails>
+      </ProductContainer>
+    </>
   );
 }
 

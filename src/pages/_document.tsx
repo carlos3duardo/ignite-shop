@@ -17,6 +17,8 @@ export default function Document() {
           rel="stylesheet"
         />
 
+        <link rel="icon" type="image/png" href="/favicon.png" />
+
         <style
           id="stitches"
           dangerouslySetInnerHTML={{ __html: getCssText() }}
