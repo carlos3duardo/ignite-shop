@@ -41,19 +41,37 @@ export const Product = styled('figure', {
 
     transform: 'translateY(110%)',
     opacity: 0,
+
     transition: 'all 0.2s ease-in-out',
 
-    strong: {
-      fontSize: '$lg',
-      color: '$gray100',
+    '.info': {
+      display: 'flex',
+      flexDirection: 'column',
+      strong: {
+        fontSize: '$lg',
+        color: '$gray100',
+      },
+
+      span: {
+        fontSize: '$xl',
+        fontWeight: 'bold',
+        color: '$green300',
+        whiteSpace: 'nowrap',
+      },
     },
 
-    span: {
-      fontSize: '$xl',
-      fontWeight: 'bold',
-      color: '$green300',
-      whiteSpace: 'nowrap',
-      marginLeft: '2rem',
+    button: {
+      width: 56,
+      height: 56,
+      backgroundColor: '$green500',
+      border: 0,
+      borderRadius: 8,
+      color: '$white',
+      cursor: 'pointer',
+
+      '&:hover': {
+        backgroundColor: '$green300',
+      },
     },
   },
 

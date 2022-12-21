@@ -1,3 +1,4 @@
+import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import { stripe } from '../lib/stripe';
 import { HomeContainer, Product } from '../styles/pages/home';
 
 import 'keen-slider/keen-slider.min.css';
+import { Handbag } from 'phosphor-react';
 
 type Products = {
   id: string;
@@ -24,10 +26,15 @@ interface HomeProps {
 export default function Home({ products }: HomeProps) {
   const [sliderRef] = useKeenSlider({
     slides: {
-      perView: 3,
+      perView: 2,
       spacing: 48,
     },
   });
+
+  const addItemToCart = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    console.log('Item adicionado a sacola de compras.');
+  };
 
   return (
     <>
@@ -51,13 +58,18 @@ export default function Home({ products }: HomeProps) {
               />
 
               <footer>
-                <strong>{product.name}</strong>
-                <span>
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(product.price)}
-                </span>
+                <div className="info">
+                  <strong>{product.name}</strong>
+                  <span>
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(product.price)}
+                  </span>
+                </div>
+                <button onClick={addItemToCart}>
+                  <Handbag size={32} weight="bold" />
+                </button>
               </footer>
             </Product>
           </Link>
