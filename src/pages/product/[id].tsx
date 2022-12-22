@@ -1,9 +1,10 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState } from 'react';
 import Stripe from 'stripe';
+import { useShoppingCart } from 'use-shopping-cart';
 import { stripe } from '../../lib/stripe';
 import {
   ImageContainer,
@@ -21,6 +22,7 @@ interface ProductProps {
 }
 
 export default function Product({
+  id,
   name,
   imageUrl,
   price,
@@ -30,25 +32,39 @@ export default function Product({
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
     useState(false);
 
-  async function handleBuyProduct() {
-    try {
-      setIsCreatingCheckoutSession(true);
+  const { addItem, cartDetails } = useShoppingCart();
 
-      const response = await axios.post('/api/checkout', {
-        priceId: defaultPriceId,
-      });
+  const isItemInCart = Object.values(cartDetails ?? {}).find(
+    (item) => item.id === id,
+  );
 
-      const { checkoutUrl } = response.data;
-
-      window.location.href = checkoutUrl;
-    } catch (err) {
-      // Contctar com algum serviço de observabilidade
-      // (Datadog, Bugsnag, Sentry...)
-
-      setIsCreatingCheckoutSession(false);
-
-      alert('Falha ao registrar o checkout');
+  async function addItemToCart() {
+    if (isItemInCart) {
+      return;
     }
+
+    setIsCreatingCheckoutSession(true);
+
+    addItem({
+      id,
+      name,
+      price,
+      currency: 'BRL',
+      price_id: defaultPriceId,
+    });
+    // try {
+    //   setIsCreatingCheckoutSession(true);
+    //   const response = await axios.post('/api/checkout', {
+    //     priceId: defaultPriceId,
+    //   });
+    //   const { checkoutUrl } = response.data;
+    //   window.location.href = checkoutUrl;
+    // } catch (err) {
+    //   // Contctar com algum serviço de observabilidade
+    //   // (Datadog, Bugsnag, Sentry...)
+    //   setIsCreatingCheckoutSession(false);
+    //   alert('Falha ao registrar o checkout');
+    // }
   }
 
   return (
@@ -66,17 +82,17 @@ export default function Product({
             {new Intl.NumberFormat('pt-BR', {
               style: 'currency',
               currency: 'BRL',
-            }).format(price)}
+            }).format(price / 100)}
           </span>
 
           <p>{description}</p>
 
           <button
             type="button"
-            onClick={handleBuyProduct}
+            onClick={addItemToCart}
             disabled={isCreatingCheckoutSession}
           >
-            Comprar agora
+            Colocar na sacola
           </button>
         </ProductDetails>
       </ProductContainer>
@@ -113,7 +129,7 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
       id: product.id,
       name: product.name,
       imageUrl: product.images[0],
-      price: price.unit_amount ? price.unit_amount / 100 : 0,
+      price: price.unit_amount,
       description: product.description,
       defaultPriceId: price.id,
     },
