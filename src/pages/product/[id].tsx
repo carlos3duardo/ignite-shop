@@ -1,8 +1,6 @@
-// import axios from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
 import Stripe from 'stripe';
 import { useShoppingCart } from 'use-shopping-cart';
 import { stripe } from '../../lib/stripe';
@@ -29,9 +27,6 @@ export default function Product({
   description,
   defaultPriceId,
 }: ProductProps) {
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
-    useState(false);
-
   const { addItem, cartDetails } = useShoppingCart();
 
   const isItemInCart = Object.values(cartDetails ?? {}).find(
@@ -43,28 +38,14 @@ export default function Product({
       return;
     }
 
-    setIsCreatingCheckoutSession(true);
-
     addItem({
       id,
       name,
-      price,
-      currency: 'BRL',
+      price: price / 100,
+      image: imageUrl,
       price_id: defaultPriceId,
+      currency: 'BRL',
     });
-    // try {
-    //   setIsCreatingCheckoutSession(true);
-    //   const response = await axios.post('/api/checkout', {
-    //     priceId: defaultPriceId,
-    //   });
-    //   const { checkoutUrl } = response.data;
-    //   window.location.href = checkoutUrl;
-    // } catch (err) {
-    //   // Contctar com algum serviço de observabilidade
-    //   // (Datadog, Bugsnag, Sentry...)
-    //   setIsCreatingCheckoutSession(false);
-    //   alert('Falha ao registrar o checkout');
-    // }
   }
 
   return (
@@ -87,11 +68,7 @@ export default function Product({
 
           <p>{description}</p>
 
-          <button
-            type="button"
-            onClick={addItemToCart}
-            disabled={isCreatingCheckoutSession}
-          >
+          <button type="button" onClick={addItemToCart}>
             Colocar na sacola
           </button>
         </ProductDetails>

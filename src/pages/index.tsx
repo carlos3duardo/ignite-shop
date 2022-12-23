@@ -48,8 +48,9 @@ export default function Home({ products }: HomeProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      currency: 'BRL',
+      image: product.imageUrl,
       price_id: product.priceId,
+      currency: 'BRL',
     });
   }
 
