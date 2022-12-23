@@ -2,6 +2,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Stripe from 'stripe';
+import { toast, ToastContainer } from 'react-toastify';
 import { useShoppingCart } from 'use-shopping-cart';
 import { stripe } from '../../lib/stripe';
 import {
@@ -9,6 +10,8 @@ import {
   ProductContainer,
   ProductDetails,
 } from '../../styles/pages/product';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 interface ProductProps {
   id: string;
@@ -35,6 +38,17 @@ export default function Product({
 
   async function addItemToCart() {
     if (isItemInCart) {
+      toast.warn(`${name} já está adicionado à sacola de compras.`, {
+        position: 'bottom-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+      });
+
       return;
     }
 
@@ -73,6 +87,7 @@ export default function Product({
           </button>
         </ProductDetails>
       </ProductContainer>
+      <ToastContainer />
     </>
   );
 }

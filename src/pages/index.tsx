@@ -5,13 +5,15 @@ import Link from 'next/link';
 import Stripe from 'stripe';
 import { GetStaticProps } from 'next';
 import { useKeenSlider } from 'keen-slider/react';
+import { toast, ToastContainer } from 'react-toastify';
+import { Handbag } from 'phosphor-react';
+import { useShoppingCart } from 'use-shopping-cart';
 
 import { stripe } from '../lib/stripe';
 import { HomeContainer, Product } from '../styles/pages/home';
 
 import 'keen-slider/keen-slider.min.css';
-import { Handbag } from 'phosphor-react';
-import { useShoppingCart } from 'use-shopping-cart';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ProductProps = {
   id: string;
@@ -41,6 +43,16 @@ export default function Home({ products }: HomeProps) {
     );
 
     if (isItemInCart) {
+      toast.warn(`${product.name} já está adicionado à sacola de compras.`, {
+        position: 'bottom-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+      });
       return;
     }
 
@@ -100,6 +112,7 @@ export default function Home({ products }: HomeProps) {
           </Product>
         ))}
       </HomeContainer>
+      <ToastContainer />
     </>
   );
 }
